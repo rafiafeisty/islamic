@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 const Calender = () => {
-    const [currentDate, setCurrentDate] = useState(new Date())
-    const [hijriDate, setHijriDate] = useState(null)
+    const [currentDate] = useState(new Date())
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
 
