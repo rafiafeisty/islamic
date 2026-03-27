@@ -4,12 +4,8 @@ const Calender = () => {
     const [currentDate] = useState(new Date())
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
-
-    useEffect(() => {
-        fetch(`https://api.aladhan.com/v1/gToH/${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}`)
-            .then(response => response.json())
-            .catch(() => null)
-    }, [currentDate])
+    const [hijriData, setHijriData] = useState({})
+    const [loading, setLoading] = useState(false)
 
     const islamicMonths = [
         'Muharram', 'Safar', 'Rabi al-Awwal', 'Rabi al-Thani',
@@ -32,12 +28,65 @@ const Calender = () => {
         'Dhu al-Hijjah': ['9 - Day of Arafah', '10 - Eid al-Adha']
     }
 
+    // Fetch Hijri date for a specific Gregorian date
+    const fetchHijriDate = async (day, month, year) => {
+        try {
+            const response = await fetch(
+                `https://api.aladhan.com/v1/gToH/${day}-${month + 1}-${year}`
+            )
+            const data = await response.json()
+            if (data.code === 200) {
+                return {
+                    day: data.data.hijri.day,
+                    month: data.data.hijri.month.en,
+                    year: data.data.hijri.year
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching Hijri date:', error)
+        }
+        return null
+    }
+
+    // Load Hijri dates for all days in selected month
+    useEffect(() => {
+        const loadHijriDates = async () => {
+            setLoading(true)
+            const daysInMonth = getDaysInMonth(selectedYear, selectedMonth)
+            const dates = {}
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const hijriDate = await fetchHijriDate(day, selectedMonth, selectedYear)
+                if (hijriDate) {
+                    dates[day] = hijriDate
+                }
+            }
+            setHijriData(dates)
+            setLoading(false)
+        }
+        
+        loadHijriDates()
+    }, [selectedMonth, selectedYear])
+
     const getDaysInMonth = (year, month) => {
         return new Date(year, month + 1, 0).getDate()
     }
 
     const getFirstDayOfMonth = (year, month) => {
         return new Date(year, month, 1).getDay()
+    }
+
+    // Check if a Hijri date has an Islamic event
+    const getIslamicEvent = (hijriDay, hijriMonth) => {
+        const monthEvents = islamicEvents[hijriMonth]
+        if (!monthEvents) return null
+        
+        const event = monthEvents.find(event => {
+            const eventDay = parseInt(event.split(' - ')[0])
+            return eventDay === hijriDay
+        })
+        
+        return event ? event.split(' - ')[1] : null
     }
 
     const renderCalendar = () => {
@@ -54,6 +103,9 @@ const Calender = () => {
                            selectedMonth === currentDate.getMonth() && 
                            selectedYear === currentDate.getFullYear()
             
+            const hijriInfo = hijriData[day]
+            const eventName = hijriInfo ? getIslamicEvent(parseInt(hijriInfo.day), hijriInfo.month) : null
+            
             days.push(
                 <div key={day} 
                      className="calendar-day"
@@ -61,17 +113,21 @@ const Calender = () => {
                          backgroundColor: isToday ? '#28a745' : 'white',
                          color: isToday ? 'white' : '#333',
                          border: '1px solid #e9ecef',
-                         padding: '10px',
+                         padding: 'clamp(8px, 3vw, 10px)',
                          textAlign: 'center',
                          cursor: 'pointer',
                          transition: 'all 0.3s ease',
                          borderRadius: '5px',
-                         fontSize: 'clamp(12px, 4vw, 16px)'
+                         position: 'relative',
+                         minHeight: 'clamp(60px, 10vw, 80px)',
+                         display: 'flex',
+                         flexDirection: 'column',
+                         justifyContent: 'center'
                      }}
                      onMouseEnter={(e) => {
                          if (!isToday) {
                              e.currentTarget.style.backgroundColor = '#f8f9fa'
-                             e.currentTarget.style.transform = 'scale(1.05)'
+                             e.currentTarget.style.transform = 'scale(1.02)'
                          }
                      }}
                      onMouseLeave={(e) => {
@@ -80,7 +136,38 @@ const Calender = () => {
                              e.currentTarget.style.transform = 'scale(1)'
                          }
                      }}>
-                    {day}
+                    <div style={{
+                        fontSize: 'clamp(14px, 4vw, 18px)',
+                        fontWeight: 'bold',
+                        marginBottom: '4px'
+                    }}>
+                        {day}
+                    </div>
+                    {hijriInfo && (
+                        <div style={{
+                            fontSize: 'clamp(10px, 2.5vw, 12px)',
+                            color: isToday ? '#e9ecef' : '#6c757d',
+                            marginBottom: eventName ? '2px' : '0'
+                        }}>
+                            {hijriInfo.day} {hijriInfo.month.substring(0, 3)}
+                        </div>
+                    )}
+                    {eventName && (
+                        <div style={{
+                            fontSize: 'clamp(9px, 2vw, 11px)',
+                            backgroundColor: '#ffc107',
+                            color: '#333',
+                            padding: '2px 4px',
+                            borderRadius: '3px',
+                            marginTop: '4px',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            fontWeight: '500'
+                        }}>
+                            {eventName}
+                        </div>
+                    )}
                 </div>
             )
         }
@@ -104,9 +191,22 @@ const Calender = () => {
         setSelectedYear(newYear)
     }
 
+    // Get current Hijri date for header
+    const [currentHijri, setCurrentHijri] = useState(null)
+    useEffect(() => {
+        const getCurrentHijri = async () => {
+            const hijri = await fetchHijriDate(
+                currentDate.getDate(),
+                currentDate.getMonth(),
+                currentDate.getFullYear()
+            )
+            setCurrentHijri(hijri)
+        }
+        getCurrentHijri()
+    }, [])
+
     return (
         <>
-            {/* Hero Section */}
             <div style={{
                 background: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)',
                 padding: 'clamp(40px, 10vw, 60px) 20px',
@@ -124,7 +224,7 @@ const Calender = () => {
                     fontSize: 'clamp(14px, 4vw, 18px)', 
                     opacity: 0.9 
                 }}>
-                    Hijri Calendar 1445-1446 AH
+                    Hijri {currentHijri?.year || '1445-1446'} AH
                 </p>
             </div>
 
@@ -199,7 +299,7 @@ const Calender = () => {
                                 color: '#333',
                                 wordBreak: 'break-word'
                             }}>
-                                1 {islamicMonths[new Date().getMonth()]} 1445 AH
+                                {currentHijri ? `${currentHijri.day} ${currentHijri.month} ${currentHijri.year} AH` : 'Loading...'}
                             </p>
                         </div>
                     </div>
@@ -258,47 +358,51 @@ const Calender = () => {
                     </div>
 
                     {/* Calendar Grid */}
-                    <div style={{
-                        background: 'white',
-                        borderRadius: '15px',
-                        padding: 'clamp(15px, 4vw, 20px)',
-                        boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                        marginBottom: 'clamp(30px, 6vw, 40px)',
-                        overflowX: 'auto'
-                    }}>
-                        {/* Weekday Headers */}
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(7, 1fr)',
-                            gap: 'clamp(3px, 2vw, 5px)',
-                            marginBottom: '10px',
-                            minWidth: '280px'
-                        }}>
-                            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                                <div key={day} style={{
-                                    textAlign: 'center',
-                                    padding: 'clamp(8px, 2vw, 10px)',
-                                    fontWeight: 'bold',
-                                    color: '#28a745',
-                                    backgroundColor: '#f8f9fa',
-                                    borderRadius: '5px',
-                                    fontSize: 'clamp(10px, 3vw, 14px)'
-                                }}>
-                                    {day}
-                                </div>
-                            ))}
+                    {loading ? (
+                        <div style={{ textAlign: 'center', padding: '40px' }}>
+                            Loading Islamic calendar...
                         </div>
-                        
-                        {/* Calendar Days */}
+                    ) : (
                         <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(7, 1fr)',
-                            gap: 'clamp(3px, 2vw, 5px)',
-                            minWidth: '280px'
+                            background: 'white',
+                            borderRadius: '15px',
+                            padding: 'clamp(15px, 4vw, 20px)',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                            marginBottom: 'clamp(30px, 6vw, 40px)',
+                            overflowX: 'auto'
                         }}>
-                            {renderCalendar()}
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(7, 1fr)',
+                                gap: 'clamp(3px, 2vw, 5px)',
+                                marginBottom: '10px',
+                                minWidth: '280px'
+                            }}>
+                                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                                    <div key={day} style={{
+                                        textAlign: 'center',
+                                        padding: 'clamp(8px, 2vw, 10px)',
+                                        fontWeight: 'bold',
+                                        color: '#28a745',
+                                        backgroundColor: '#f8f9fa',
+                                        borderRadius: '5px',
+                                        fontSize: 'clamp(10px, 3vw, 14px)'
+                                    }}>
+                                        {day}
+                                    </div>
+                                ))}
+                            </div>
+                            
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(7, 1fr)',
+                                gap: 'clamp(3px, 2vw, 5px)',
+                                minWidth: '280px'
+                            }}>
+                                {renderCalendar()}
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     {/* Islamic Events */}
                     <div style={{
