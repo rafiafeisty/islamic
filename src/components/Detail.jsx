@@ -21,20 +21,17 @@ const Detail = () => {
         setLoading(true);
         setError(null);
 
-        // Surah info
         const surahRes = await fetch(
           `https://api.alquran.cloud/v1/surah/${surahNumber}`
         );
         const surahData = await surahRes.json();
         setSurahInfo(surahData.data);
 
-        // Arabic text
         const arabicRes = await fetch(
           `https://api.alquran.cloud/v1/surah/${surahNumber}/quran-uthmani`
         );
         const arabicData = await arabicRes.json();
 
-        // English translation
         const englishRes = await fetch(
           `https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`
         );
@@ -58,7 +55,6 @@ const Detail = () => {
     fetchSurahDetails();
   }, [surahNumber]);
 
-  // 🔊 FIXED AUDIO (SURAH LEVEL)
   const playSurah = () => {
     if (!audioEnabled) return;
 
@@ -116,56 +112,69 @@ const Detail = () => {
           background: "linear-gradient(135deg,#28a745,#20c997)",
           color: "white",
           textAlign: "center",
-          padding: "40px",
+          padding: "clamp(25px, 5vw, 40px)",
           marginTop: "56px",
           position: "relative",
         }}
       >
+        {/* Back Button */}
         <button
           onClick={() => navigate("/surah")}
           style={{
             position: "absolute",
-            left: "20px",
-            top: "50%",
-            transform: "translateY(-50%)",
+            left: "10px",
+            top: "10px",
             background: "rgba(255,255,255,0.2)",
             border: "none",
             color: "white",
-            padding: "8px 15px",
+            padding: "6px 12px",
             borderRadius: "20px",
             cursor: "pointer",
+            fontSize: "clamp(12px, 2.5vw, 14px)",
           }}
         >
           ← Back
         </button>
 
-        <h1>{surahInfo?.name}</h1>
-        <p>
+        <h1 style={{ fontSize: "clamp(22px, 5vw, 32px)" }}>
+          {surahInfo?.name}
+        </h1>
+
+        <p style={{ fontSize: "clamp(14px, 3vw, 16px)" }}>
           {surahInfo?.englishName} • {surahInfo?.numberOfAyahs} Ayahs
         </p>
 
-        <div style={{ marginTop: "10px" }}>
+        {/* Controls */}
+        <div
+          style={{
+            marginTop: "10px",
+            display: "flex",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            gap: "10px",
+          }}
+        >
           <button
             onClick={playSurah}
             style={{
-              marginRight: "10px",
-              padding: "8px 15px",
+              padding: "6px 12px",
               borderRadius: "20px",
               border: "none",
               cursor: "pointer",
+              fontSize: "clamp(12px, 2.5vw, 14px)",
             }}
           >
-            🎵 Play Surah
+            🎵 Play
           </button>
 
           <button
             onClick={stopAudio}
             style={{
-              marginRight: "10px",
-              padding: "8px 15px",
+              padding: "6px 12px",
               borderRadius: "20px",
               border: "none",
               cursor: "pointer",
+              fontSize: "clamp(12px, 2.5vw, 14px)",
             }}
           >
             ⏹ Stop
@@ -174,10 +183,11 @@ const Detail = () => {
           <button
             onClick={() => setAudioEnabled(!audioEnabled)}
             style={{
-              padding: "8px 15px",
+              padding: "6px 12px",
               borderRadius: "20px",
               border: "none",
               cursor: "pointer",
+              fontSize: "clamp(12px, 2.5vw, 14px)",
             }}
           >
             {audioEnabled ? "🔊 ON" : "🔇 OFF"}
@@ -186,7 +196,12 @@ const Detail = () => {
       </div>
 
       {/* AYAH LIST */}
-      <div style={{ padding: "20px", background: "#f8f9fa" }}>
+      <div
+        style={{
+          padding: "clamp(15px, 4vw, 25px)",
+          background: "#f8f9fa",
+        }}
+      >
         <div style={{ maxWidth: "900px", margin: "auto" }}>
           {ayahs.map((ayah) => (
             <div
@@ -194,31 +209,46 @@ const Detail = () => {
               style={{
                 background: "white",
                 marginBottom: "15px",
-                padding: "20px",
+                padding: "clamp(12px, 3vw, 20px)",
                 borderRadius: "10px",
                 border: "1px solid #ddd",
               }}
             >
               {/* number */}
-              <div style={{ fontWeight: "bold", color: "#28a745" }}>
+              <div
+                style={{
+                  fontWeight: "bold",
+                  color: "#28a745",
+                  fontSize: "clamp(14px, 3vw, 16px)",
+                }}
+              >
                 Ayah {ayah.number}
               </div>
 
               {/* Arabic */}
               <div
                 style={{
-                  fontSize: "26px",
+                  fontSize: "clamp(20px, 5vw, 26px)",
                   textAlign: "right",
                   margin: "15px 0",
                   direction: "rtl",
                   fontFamily: "serif",
+                  lineHeight: "1.8",
                 }}
               >
                 {ayah.arabic}
               </div>
 
               {/* translation */}
-              <div style={{ color: "#555" }}>{ayah.english}</div>
+              <div
+                style={{
+                  color: "#555",
+                  fontSize: "clamp(14px, 3vw, 16px)",
+                  lineHeight: "1.6",
+                }}
+              >
+                {ayah.english}
+              </div>
             </div>
           ))}
         </div>
