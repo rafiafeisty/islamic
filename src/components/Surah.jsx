@@ -33,19 +33,25 @@ const Surah = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                minHeight: "100vh"
+                minHeight: "100vh",
+                padding: "20px"
             }}>
                 <div style={{ textAlign: "center" }}>
                     <div style={{
-                        width: "50px",
-                        height: "50px",
+                        width: "clamp(40px, 8vw, 50px)",
+                        height: "clamp(40px, 8vw, 50px)",
                         border: "5px solid #f3f3f3",
                         borderTop: "5px solid #28a745",
                         borderRadius: "50%",
                         animation: "spin 1s linear infinite",
                         margin: "0 auto 20px"
                     }} />
-                    <p style={{ color: "#28a745" }}>Loading Surahs...</p>
+                    <p style={{ 
+                        color: "#28a745",
+                        fontSize: "clamp(14px, 4vw, 16px)"
+                    }}>
+                        Loading Surahs...
+                    </p>
                     <style>{`
                         @keyframes spin {
                             0% { transform: rotate(0deg); }
@@ -64,26 +70,40 @@ const Surah = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                minHeight: "100vh"
+                minHeight: "100vh",
+                padding: "20px"
             }}>
                 <div style={{
                     textAlign: "center",
                     color: "red",
                     backgroundColor: "#f8d7da",
-                    padding: "20px",
-                    borderRadius: "10px"
+                    padding: "clamp(15px, 5vw, 20px)",
+                    borderRadius: "10px",
+                    maxWidth: "90%",
+                    margin: "0 20px"
                 }}>
-                    <h3>Error Loading Surahs</h3>
-                    <p>{error}</p>
+                    <h3 style={{
+                        fontSize: "clamp(18px, 5vw, 24px)",
+                        marginBottom: "10px"
+                    }}>
+                        Error Loading Surahs
+                    </h3>
+                    <p style={{
+                        fontSize: "clamp(14px, 4vw, 16px)",
+                        marginBottom: "15px"
+                    }}>
+                        {error}
+                    </p>
                     <button
                         onClick={() => window.location.reload()}
                         style={{
                             backgroundColor: "#28a745",
                             color: "white",
                             border: "none",
-                            padding: "10px 20px",
+                            padding: "clamp(8px, 3vw, 10px) clamp(15px, 5vw, 20px)",
                             borderRadius: "5px",
-                            cursor: "pointer"
+                            cursor: "pointer",
+                            fontSize: "clamp(14px, 4vw, 16px)"
                         }}
                     >
                         Try Again
@@ -98,20 +118,28 @@ const Surah = () => {
             {/* Header Section */}
             <div style={{
                 background: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)',
-                padding: '60px 20px',
+                padding: 'clamp(40px, 10vw, 60px) 20px',
                 textAlign: 'center',
                 color: 'white',
                 marginTop: '56px'
             }}>
-                <h1 style={{ fontSize: '48px', marginBottom: '10px' }}>Surah Al-Quran</h1>
-                <p style={{ fontSize: '18px', opacity: 0.9 }}>
+                <h1 style={{ 
+                    fontSize: 'clamp(32px, 8vw, 48px)', 
+                    marginBottom: '10px' 
+                }}>
+                    Surah Al-Quran
+                </h1>
+                <p style={{ 
+                    fontSize: 'clamp(14px, 4vw, 18px)', 
+                    opacity: 0.9 
+                }}>
                     {surahs.length} Chapters • The Holy Quran
                 </p>
             </div>
 
             {/* Surah Grid */}
             <div style={{
-                padding: '40px 20px',
+                padding: 'clamp(30px, 5vw, 40px) clamp(15px, 4vw, 20px)',
                 backgroundColor: '#f8f9fa',
                 minHeight: 'calc(100vh - 200px)'
             }}>
@@ -119,8 +147,8 @@ const Surah = () => {
                     maxWidth: '1400px',
                     margin: '0 auto',
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-                    gap: '20px'
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(clamp(280px, 90vw, 350px), 1fr))',
+                    gap: 'clamp(15px, 4vw, 20px)'
                 }}>
                     {surahs.map((surah) => (
                         <div
@@ -147,42 +175,48 @@ const Surah = () => {
                             {/* Surah Number Badge */}
                             <div style={{
                                 backgroundColor: '#28a745',
-                                padding: '8px 15px',
+                                padding: 'clamp(6px, 2vw, 8px) clamp(12px, 3vw, 15px)',
                                 display: 'inline-block',
                                 color: 'white',
                                 fontWeight: 'bold',
-                                borderRadius: '0 0 10px 0'
+                                borderRadius: '0 0 10px 0',
+                                fontSize: 'clamp(12px, 3.5vw, 14px)'
                             }}>
                                 #{surah.number}
                             </div>
 
-                            <div style={{ padding: '20px' }}>
+                            <div style={{ 
+                                padding: 'clamp(15px, 4vw, 20px)' 
+                            }}>
                                 {/* Surah Name in Arabic */}
                                 <h3 style={{
-                                    fontSize: '24px',
+                                    fontSize: 'clamp(20px, 6vw, 24px)',
                                     fontWeight: 'bold',
                                     color: '#28a745',
                                     marginBottom: '10px',
                                     textAlign: 'right',
-                                    fontFamily: 'traditional arabic, "Amiri", serif'
+                                    fontFamily: 'traditional arabic, "Amiri", serif',
+                                    wordBreak: 'break-word'
                                 }}>
                                     {surah.name}
                                 </h3>
 
                                 {/* Surah Name in English */}
                                 <h5 style={{
-                                    fontSize: '18px',
+                                    fontSize: 'clamp(16px, 4.5vw, 18px)',
                                     fontWeight: '600',
                                     color: '#333',
-                                    marginBottom: '15px'
+                                    marginBottom: '15px',
+                                    wordBreak: 'break-word'
                                 }}>
                                     {surah.englishName}
                                 </h5>
 
                                 <p style={{
-                                    fontSize: '14px',
+                                    fontSize: 'clamp(12px, 3.5vw, 14px)',
                                     color: '#6c757d',
-                                    marginBottom: '10px'
+                                    marginBottom: '10px',
+                                    wordBreak: 'break-word'
                                 }}>
                                     {surah.englishNameTranslation}
                                 </p>
@@ -194,13 +228,15 @@ const Surah = () => {
                                     alignItems: 'center',
                                     marginTop: '15px',
                                     paddingTop: '15px',
-                                    borderTop: '1px solid #e9ecef'
+                                    borderTop: '1px solid #e9ecef',
+                                    flexWrap: 'wrap',
+                                    gap: '10px'
                                 }}>
                                     <div style={{
                                         backgroundColor: '#f8f9fa',
-                                        padding: '5px 12px',
+                                        padding: 'clamp(4px, 2vw, 5px) clamp(10px, 3vw, 12px)',
                                         borderRadius: '20px',
-                                        fontSize: '14px',
+                                        fontSize: 'clamp(12px, 3.5vw, 14px)',
                                         color: '#28a745',
                                         fontWeight: '500'
                                     }}>
@@ -209,9 +245,9 @@ const Surah = () => {
 
                                     <div style={{
                                         backgroundColor: surah.revelationType === 'Meccan' ? '#ffc107' : '#17a2b8',
-                                        padding: '5px 12px',
+                                        padding: 'clamp(4px, 2vw, 5px) clamp(10px, 3vw, 12px)',
                                         borderRadius: '20px',
-                                        fontSize: '12px',
+                                        fontSize: 'clamp(10px, 3vw, 12px)',
                                         color: 'white',
                                         fontWeight: '500'
                                     }}>
@@ -227,11 +263,16 @@ const Surah = () => {
             {/* Footer Note */}
             <div style={{
                 textAlign: 'center',
-                padding: '20px',
+                padding: 'clamp(15px, 4vw, 20px)',
                 backgroundColor: '#e9ecef',
                 color: '#6c757d'
             }}>
-                <p style={{ margin: 0 }}>القرآن الكريم • The Holy Quran • {surahs.length} Surahs</p>
+                <p style={{ 
+                    margin: 0,
+                    fontSize: 'clamp(12px, 3.5vw, 14px)'
+                }}>
+                    القرآن الكريم • The Holy Quran • {surahs.length} Surahs
+                </p>
             </div>
         </>
     );
