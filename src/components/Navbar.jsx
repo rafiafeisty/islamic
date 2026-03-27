@@ -85,6 +85,17 @@ const Navbar = () => {
                                 Surah
                             </Link>
                         </li>
+                        <li className="nav-item">
+                            <Link
+                                className="nav-link"
+                                to="/juz"
+                                style={linkStyle}
+                                onMouseEnter={(e) => e.target.style.color = "#c8ffd4"}
+                                onMouseLeave={(e) => e.target.style.color = "white"}
+                            >
+                                Juz
+                            </Link>
+                        </li>
 
                     </ul>
                 </div>
