@@ -1,108 +1,57 @@
-import React from 'react'
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const Navbar = () => {
-
-    const linkStyle = {
-        transition: "0.2s ease",
-        color: "white",
-        textDecoration: "none"
-    };
+    const [isOpen, setIsOpen] = useState(false);
+    const [dark,setdark]=useState(false);
+    const darking=()=>{
+        if(dark){
+            setdark=false;
+        }
+        else{
+            setdark=true;
+        }
+    }
 
     return (
-        <nav className="navbar navbar-expand-lg bg-success fixed-top">
-            <div className="container-fluid">
-
-                <Link
-                    className="navbar-brand"
-                    to="/"
-                    style={linkStyle}
-                    onMouseEnter={(e) => e.target.style.color = "#c8ffd4"}
-                    onMouseLeave={(e) => e.target.style.color = "white"}
-                >
-                    Islam
-                </Link>
-
-                <button
-                    className="navbar-toggler"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation"
-                >
-                    <span className="navbar-toggler-icon"></span>
-                </button>
-
-                <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-
-                        <li className="nav-item">
-                            <Link
-                                className="nav-link"
-                                to="/"
-                                style={linkStyle}
-                                onMouseEnter={(e) => e.target.style.color = "#c8ffd4"}
-                                onMouseLeave={(e) => e.target.style.color = "white"}
-                            >
-                                Home
-                            </Link>
-                        </li>
-
-                        <li className="nav-item">
-                            <Link
-                                className="nav-link"
-                                to="/calender"
-                                style={linkStyle}
-                                onMouseEnter={(e) => e.target.style.color = "#c8ffd4"}
-                                onMouseLeave={(e) => e.target.style.color = "white"}
-                            >
-                                Calendar
-                            </Link>
-                        </li>
-
-                        <li className="nav-item">
-                            <Link
-                                className="nav-link"
-                                to="/prayer"
-                                style={linkStyle}
-                                onMouseEnter={(e) => e.target.style.color = "#c8ffd4"}
-                                onMouseLeave={(e) => e.target.style.color = "white"}
-                            >
-                                Prayer Time
-                            </Link>
-                        </li>
-
-                        <li className="nav-item">
-                            <Link
-                                className="nav-link"
-                                to="/surah"
-                                style={linkStyle}
-                                onMouseEnter={(e) => e.target.style.color = "#c8ffd4"}
-                                onMouseLeave={(e) => e.target.style.color = "white"}
-                            >
-                                Surah
-                            </Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link
-                                className="nav-link"
-                                to="/juz"
-                                style={linkStyle}
-                                onMouseEnter={(e) => e.target.style.color = "#c8ffd4"}
-                                onMouseLeave={(e) => e.target.style.color = "white"}
-                            >
-                                Juz
-                            </Link>
-                        </li>
-
-                    </ul>
+        <nav className="fixed w-full bg-emerald-900 border-b border-emerald-600 z-50 top-0">
+            <div className="max-w-7xl mx-auto px-6 py-5">
+                <div className="hidden md:flex items-center justify-center gap-10 text-white text-lg">
+                    <Link to="/" className="hover:text-amber-400 transition-colors">Home</Link>
+                    <Link to="/surah" className="hover:text-amber-400 transition-colors">Surah</Link>
+                    <Link to="/juz" className="hover:text-amber-400 transition-colors">Juz</Link>
+                    <Link to="/prayer" className="hover:text-amber-400 transition-colors">Prayer Time</Link>
+                    <Link to="/calender" className="hover:text-amber-400 transition-colors">Calander</Link>
+                    <Link to="/hadith" className="hover:text-amber-400 transition-colors">Hadith</Link>
+                    <Link to="/search" className="hover:text-amber-400 transition-colors">Search</Link>
                 </div>
 
+                {/* Mobile Menu */}
+                <div className="md:hidden flex justify-between items-center">
+                    <div className="text-2xl font-bold text-white">Quran</div>
+                    <button
+                        onClick={() => setIsOpen(!isOpen)}
+                        className="flex flex-col gap-1.5"
+                    >
+                        <span className={`block w-7 h-0.5 bg-white transition-all ${isOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
+                        <span className={`block w-7 h-0.5 bg-white transition-all ${isOpen ? 'opacity-0' : ''}`}></span>
+                        <span className={`block w-7 h-0.5 bg-white transition-all ${isOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
+                    </button>
+                </div>
+            </div>
+
+            {/* Mobile Dropdown */}
+            <div className={`md:hidden bg-emerald-950 border-t border-emerald-700 transition-all duration-300 ${isOpen ? 'max-h-96' : 'max-h-0 overflow-hidden'}`}>
+                <div className="flex flex-col text-white py-4 px-6 text-lg">
+                    <Link to="/" className="py-3 hover:text-amber-400" onClick={() => setIsOpen(false)}>Home</Link>
+                    <Link to="/surah" className="py-3 hover:text-amber-400" onClick={() => setIsOpen(false)}>Surah</Link>
+                    <Link to="/juz" className="py-3 hover:text-amber-400" onClick={() => setIsOpen(false)}>Juz</Link>
+                    <Link to="/prayer" className="py-3 hover:text-amber-400" onClick={() => setIsOpen(false)}>Prayer Time</Link>
+                    <Link to="/calender" className="py-3 hover:text-amber-400" onClick={() => setIsOpen(false)}>Calendar</Link>
+                </div>
             </div>
         </nav>
     );
-}
+};
 
 export default Navbar;

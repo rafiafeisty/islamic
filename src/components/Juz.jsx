@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import pattern from '../images/pattern.png'
 
 const Juz = () => {
   const [juzList, setJuzList] = useState([]);
@@ -7,10 +8,9 @@ const Juz = () => {
   const [error, setError] = useState(null);
   const [selectedJuz, setSelectedJuz] = useState(null);
   const [juzDetails, setJuzDetails] = useState(null);
-  const [viewMode, setViewMode] = useState('list'); // 'list' or 'detail'
+  const [viewMode, setViewMode] = useState('list');
   const navigate = useNavigate();
 
-  // Juz names/descriptions (optional, for better UX)
   const juzNames = [
     { number: 1, name: "Alif Lam Meem", start: "Al-Fatiha 1" },
     { number: 2, name: "Sayaqool", start: "Al-Baqarah 142" },
@@ -44,7 +44,6 @@ const Juz = () => {
     { number: 30, name: "Amma Yatasa'aloon", start: "An-Naba 1" }
   ];
 
-  // Create juz list with basic info
   useEffect(() => {
     const juzData = [];
     for (let i = 1; i <= 30; i++) {
@@ -59,27 +58,23 @@ const Juz = () => {
     setLoading(false);
   }, []);
 
-  // Fetch detailed Juz data when selected
   const fetchJuzDetails = async (juzNumber) => {
     try {
       setLoading(true);
       setError(null);
-      
-      // Fetch Arabic text
+
       const arabicRes = await fetch(
         `https://api.alquran.cloud/v1/juz/${juzNumber}/quran-uthmani`
       );
       if (!arabicRes.ok) throw new Error('Failed to fetch Arabic text');
       const arabicData = await arabicRes.json();
-      
-      // Fetch English translation (using Sahih International)
+
       const englishRes = await fetch(
         `https://api.alquran.cloud/v1/juz/${juzNumber}/en.sahih`
       );
       if (!englishRes.ok) throw new Error('Failed to fetch English translation');
       const englishData = await englishRes.json();
-      
-      // Combine Arabic and English ayahs
+
       const combinedAyahs = arabicData.data.ayahs.map((ayah, index) => ({
         number: ayah.number,
         numberInSurah: ayah.numberInSurah,
@@ -90,7 +85,7 @@ const Juz = () => {
         juz: ayah.juz,
         page: ayah.page
       }));
-      
+
       setJuzDetails({
         number: juzNumber,
         ayahs: combinedAyahs,
@@ -118,60 +113,24 @@ const Juz = () => {
 
   if (loading && viewMode === 'list') {
     return (
-      <div style={{ 
-        textAlign: "center", 
-        marginTop: "clamp(80px, 20vh, 100px)",
-        padding: "20px",
-        fontSize: "clamp(14px, 4vw, 16px)"
-      }}>
-        <div style={{
-          width: "clamp(40px, 8vw, 50px)",
-          height: "clamp(40px, 8vw, 50px)",
-          border: "5px solid #f3f3f3",
-          borderTop: "5px solid #28a745",
-          borderRadius: "50%",
-          animation: "spin 1s linear infinite",
-          margin: "0 auto 20px"
-        }} />
-        <style>{`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}</style>
-        Loading Juz...
+      <div className="mt-20 flex justify-center items-center min-h-screen p-5">
+        <div className="text-center">
+          <div className="w-10 sm:w-12 h-10 sm:h-12 border-4 border-gray-200 border-t-green-600 rounded-full animate-spin mx-auto mb-5"></div>
+          <p className="text-green-600">Loading Juz...</p>
+        </div>
       </div>
     );
   }
 
   if (error && viewMode === 'list') {
     return (
-      <div style={{ 
-        textAlign: "center", 
-        marginTop: "clamp(80px, 20vh, 100px)", 
-        padding: "20px"
-      }}>
-        <div style={{
-          backgroundColor: "#f8d7da",
-          color: "#721c24",
-          padding: "clamp(15px, 4vw, 20px)",
-          borderRadius: "10px",
-          maxWidth: "500px",
-          margin: "0 auto"
-        }}>
-          <h3 style={{ marginBottom: "10px" }}>Error Loading Juz</h3>
-          <p>{error}</p>
+      <div className="mt-20 flex justify-center items-center min-h-screen p-5">
+        <div className="text-center bg-red-100 text-red-700 p-5 rounded-lg max-w-md mx-auto">
+          <h3 className="text-xl mb-2">Error Loading Juz</h3>
+          <p className="mb-3">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            style={{
-              backgroundColor: "#28a745",
-              color: "white",
-              border: "none",
-              padding: "10px 20px",
-              borderRadius: "5px",
-              cursor: "pointer",
-              marginTop: "10px"
-            }}
+            className="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition-all"
           >
             Try Again
           </button>
@@ -184,128 +143,44 @@ const Juz = () => {
   if (viewMode === 'detail' && juzDetails) {
     return (
       <>
-        {/* Header */}
-        <div
-          style={{
-            background: "linear-gradient(135deg,#28a745,#20c997)",
-            color: "white",
-            textAlign: "center",
-            padding: "clamp(25px, 5vw, 40px)",
-            marginTop: "56px",
-            position: "relative",
-          }}
-        >
+        <div className="text-emerald-700 text-center pt-12 pb-8 px-4 mt-14 relative">
           <button
             onClick={goBackToList}
-            style={{
-              position: "absolute",
-              left: "clamp(10px, 3vw, 20px)",
-              top: "clamp(10px, 3vw, 20px)",
-              background: "rgba(255,255,255,0.2)",
-              border: "none",
-              color: "white",
-              padding: "clamp(6px, 2vw, 8px) clamp(12px, 3vw, 15px)",
-              borderRadius: "20px",
-              cursor: "pointer",
-              fontSize: "clamp(12px, 2.5vw, 14px)",
-            }}
+            className="absolute left-4 top-4 bg-emerald-900 hover:bg-emerald-900/70 text-white px-3 py-1 rounded-full text-sm transition-all"
           >
             ← Back to Juz List
           </button>
 
-          <h1 style={{ fontSize: "clamp(22px, 5vw, 32px)" }}>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">
             Juz {juzDetails.number}
           </h1>
-          <p style={{ fontSize: "clamp(14px, 3vw, 16px)" }}>
+          <p className="text-sm sm:text-base mt-2">
             {juzDetails.startSurah} - {juzDetails.endSurah} • {juzDetails.totalAyahs} Ayahs
           </p>
         </div>
 
-        {/* Ayah List */}
-        <div
-          style={{
-            padding: "clamp(15px, 4vw, 25px)",
-            background: "#f8f9fa",
-          }}
-        >
-          <div style={{ maxWidth: "900px", margin: "auto" }}>
+        <div className="bg-gray-100 py-6 px-4 sm:px-6">
+          <div className="max-w-3xl mx-auto">
             {juzDetails.ayahs.map((ayah) => (
               <div
                 key={ayah.number}
-                style={{
-                  background: "white",
-                  marginBottom: "15px",
-                  padding: "clamp(15px, 4vw, 20px)",
-                  borderRadius: "10px",
-                  border: "1px solid #ddd",
-                  transition: "all 0.3s ease"
-                }}
+                className="bg-white mb-4 p-4 sm:p-5 rounded-xl border border-gray-200 hover:shadow-md transition-all"
               >
-                {/* Ayah Info */}
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    flexWrap: "wrap",
-                    gap: "10px",
-                    marginBottom: "10px"
-                  }}
-                >
-                  <div
-                    style={{
-                      fontWeight: "bold",
-                      color: "#28a745",
-                      fontSize: "clamp(12px, 3vw, 14px)",
-                      backgroundColor: "#f8f9fa",
-                      padding: "4px 12px",
-                      borderRadius: "20px"
-                    }}
-                  >
+                <div className="flex flex-wrap justify-between items-center mb-3 gap-2">
+                  <div className="font-bold text-emerald-600 text-xs sm:text-sm bg-gray-100 px-3 py-1 rounded-full">
                     Surah {ayah.surahEnglishName} • Ayah {ayah.numberInSurah}
                   </div>
-                  <div
-                    style={{
-                      fontSize: "clamp(10px, 2.5vw, 12px)",
-                      color: "#6c757d",
-                      backgroundColor: "#f8f9fa",
-                      padding: "4px 12px",
-                      borderRadius: "20px"
-                    }}
-                  >
+                  <div className="text-gray-500 text-xs bg-gray-100 px-3 py-1 rounded-full">
                     Page {ayah.page}
                   </div>
                 </div>
 
-                {/* Arabic Text */}
-                <div
-                  style={{
-                    fontSize: "clamp(20px, 5vw, 26px)",
-                    textAlign: "right",
-                    margin: "15px 0",
-                    direction: "rtl",
-                    fontFamily: "serif",
-                    lineHeight: "1.8",
-                    color: "#2c3e50"
-                  }}
-                >
+                <div className="text-right text-xl sm:text-2xl md:text-3xl my-4 font-serif leading-relaxed text-gray-800">
                   {ayah.arabic}
                 </div>
 
-                {/* English Translation */}
-                <div
-                  style={{
-                    color: "#555",
-                    fontSize: "clamp(14px, 3vw, 16px)",
-                    lineHeight: "1.6",
-                    borderTop: "1px solid #e9ecef",
-                    paddingTop: "15px",
-                    marginTop: "5px"
-                  }}
-                >
-                  <span style={{ fontWeight: "bold", color: "#28a745" }}>
-                    Translation:{" "}
-                  </span>
+                <div className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3 border-t border-gray-200">
+                  <span className="font-bold text-emerald-600">Translation: </span>
                   {ayah.english}
                 </div>
               </div>
@@ -319,142 +194,56 @@ const Juz = () => {
   // List View
   return (
     <>
-      {/* Header Section */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)',
-          padding: 'clamp(40px, 10vw, 60px) 20px',
-          textAlign: 'center',
-          color: 'white',
-          marginTop: '56px'
-        }}
-      >
-        <h1 style={{ 
-          fontSize: 'clamp(32px, 8vw, 48px)', 
-          marginBottom: '10px' 
-        }}>
+      <div className="text-center grid text-emerald-700 justify-center items-center pt-16 pb-12 px-4 mt-14">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl mb-2">
           Juz (Parts) of Quran
         </h1>
-        <p style={{ 
-          fontSize: 'clamp(14px, 4vw, 18px)', 
-          opacity: 0.9 
-        }}>
+        <p className="text-sm sm:text-base opacity-90">
           30 Juz • The Holy Quran Divided into 30 Equal Parts
         </p>
+        <img
+          src={pattern}
+          alt="pattern"
+          className="mx-auto mt-8 opacity-75 w-48"
+        />
       </div>
 
-      {/* Juz Grid */}
-      <div style={{
-        padding: 'clamp(30px, 5vw, 40px) clamp(15px, 4vw, 20px)',
-        backgroundColor: '#f8f9fa',
-        minHeight: 'calc(100vh - 200px)'
-      }}>
-        <div style={{
-          maxWidth: '1400px',
-          margin: '0 auto',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(clamp(280px, 90vw, 350px), 1fr))',
-          gap: 'clamp(15px, 4vw, 20px)'
-        }}>
-          {juzList.map((juz) => (
-            <div
-              key={juz.number}
-              onClick={() => handleJuzClick(juz.number)}
-              style={{
-                backgroundColor: 'white',
-                borderRadius: '15px',
-                overflow: 'hidden',
-                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                transition: 'all 0.3s ease',
-                cursor: 'pointer',
-                border: '1px solid #e9ecef'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-5px)';
-                e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.15)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
-              }}
-            >
-              {/* Juz Number Badge */}
-              <div style={{
-                backgroundColor: '#28a745',
-                padding: 'clamp(8px, 2vw, 10px) clamp(15px, 3vw, 20px)',
-                display: 'inline-block',
-                color: 'white',
-                fontWeight: 'bold',
-                borderRadius: '0 0 10px 0',
-                fontSize: 'clamp(14px, 3.5vw, 16px)'
-              }}>
-                Juz {juz.number}
-              </div>
+      <div className="bg-gray-100 py-8 px-4 sm:px-6 min-h-[calc(100vh-200px)]">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {juzList.map((juz) => (
+              <div
+                key={juz.number}
+                onClick={() => handleJuzClick(juz.number)}
+                className="rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer border-[1px] border-emerald-400 overflow-hidden"
+              >
+                <div className="bg-emerald-600 text-white font-bold inline-block px-3 py-1 rounded-br-lg text-xs sm:text-sm">
+                  Juz {juz.number}
+                </div>
 
-              <div style={{ padding: 'clamp(15px, 4vw, 20px)' }}>
-                <h3 style={{
-                  fontSize: 'clamp(20px, 5vw, 24px)',
-                  fontWeight: 'bold',
-                  color: '#28a745',
-                  marginBottom: '10px'
-                }}>
-                  {juz.name}
-                </h3>
-                
-                <p style={{
-                  fontSize: 'clamp(14px, 3.5vw, 16px)',
-                  color: '#6c757d',
-                  marginBottom: '15px'
-                }}>
-                  Starts at: {juz.start}
-                </p>
+                <div className="p-4 sm:p-5">
+                  <h3 className="text-xl sm:text-2xl font-bold text-emerald-600 mb-2">
+                    {juz.name}
+                  </h3>
 
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginTop: '15px',
-                  paddingTop: '15px',
-                  borderTop: '1px solid #e9ecef'
-                }}>
-                  <div style={{
-                    backgroundColor: '#f8f9fa',
-                    padding: '5px 12px',
-                    borderRadius: '20px',
-                    fontSize: 'clamp(12px, 3vw, 14px)',
-                    color: '#28a745',
-                    fontWeight: '500'
-                  }}>
-                    Part {juz.number} of 30
-                  </div>
-                  
-                  <div style={{
-                    color: '#20c997',
-                    fontSize: 'clamp(12px, 3vw, 14px)',
-                    fontWeight: '500'
-                  }}>
-                    Read Juz →
+                  <p className="text-sm text-gray-500 mb-3">
+                    Starts at: {juz.start}
+                  </p>
+
+                  <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-200">
+                    <div className="bg-gray-100 px-2 py-1 rounded-full text-xs sm:text-sm text-green-600 font-medium">
+                      Part {juz.number} of 30
+                    </div>
+
+                    <div className="text-teal-500 text-xs sm:text-sm font-medium">
+                      Read Juz →
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-
-      {/* Footer Note */}
-      <div style={{
-        textAlign: 'center',
-        padding: 'clamp(15px, 4vw, 20px)',
-        backgroundColor: '#e9ecef',
-        color: '#6c757d'
-      }}>
-        <p style={{ 
-          margin: 0,
-          fontSize: 'clamp(12px, 3.5vw, 14px)'
-        }}>
-          القرآن الكريم • The Holy Quran • 30 Juz
-        </p>
       </div>
     </>
   );

@@ -7,6 +7,8 @@ import Detail from './components/Detail';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Juz from './components/Juz';
+import Hadith from './components/Hadith';
+import Search from './components/Search';
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/surah" element={<Surah />} />
         <Route path="/surah/:surahNumber" element={<Detail />} />
         <Route path="/juz" element={<Juz />} />
+        <Route path="/hadith" element={<Hadith />} />
+        <Route path="/search" element={<Search />} />
       </Routes>
       <Footer />
     </BrowserRouter>

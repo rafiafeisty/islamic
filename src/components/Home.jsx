@@ -3,62 +3,69 @@ import home from '../images/home.png'
 
 const Home = () => {
     const cardData = [
-        { title: 'Para', value: 30, subtitle: 'Total Paras in Quran', color: '#28a745' },
-        { title: 'Surah', value: 114, subtitle: 'Total Surahs in Quran', color: '#198754' },
-        { title: 'Ayat', value: 6666, subtitle: 'Total Ayats in Quran', color: '#20c997' }
+        { title: 'Para', value: 30, subtitle: 'Total Paras in Quran', color: 'bg-emerald-600', textColor: 'text-emerald-600' },
+        { title: 'Surah', value: 114, subtitle: 'Total Surahs in Quran', color: 'bg-emerald-600', textColor: 'text-emerald-600' },
+        { title: 'Ayat', value: 6666, subtitle: 'Total Ayats in Quran', color: 'bg-teal-500', textColor: 'text-teal-500' },
+        { title: 'Juz', value: 30, subtitle: 'Total Juz in Quran', color: 'bg-teal-500', textColor: 'text-teal-500' }
     ]
 
     return (
         <>
-            <div style={{ width: '100%', overflow: 'hidden', marginTop: '56px' }}>
+            {/* Hero Image */}
+            <div className="w-full overflow-hidden relative">
                 <img
                     src={home}
                     alt="mosque"
-                    style={{
-                        width: '100%',
-                        display: 'block'
-                    }}
+                    className="w-full block shadow-lg shadow-slate-900/30"
                 />
+                <div className='absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/10'></div>
             </div>
 
-            <div className="container my-5">
-                <div className="row g-4">
+            {/* Cards Section */}
+            <div className="container mx-auto my-12 px-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
                     {cardData.map((card, index) => (
-                        <div className="col-md-4 col-sm-6 col-12" key={index}>
-                            <div className="card h-100 border-0 shadow-lg" 
-                                 style={{ 
-                                     borderRadius: '15px',
-                                     transition: 'transform 0.3s ease',
-                                     cursor: 'pointer'
-                                 }}
-                                 onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
-                                 onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
-                                <div className="card-body text-center p-4">
-                                    <div style={{
-                                        backgroundColor: card.color,
-                                        width: '80px',
-                                        height: '80px',
-                                        borderRadius: '50%',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        margin: '0 auto 20px auto',
-                                        color: 'white',
-                                        fontSize: '28px',
-                                        fontWeight: 'bold'
-                                    }}>
-                                        {card.value}
-                                    </div>
-                                    <h5 className="card-title" style={{ color: card.color, fontWeight: 'bold' }}>
-                                        {card.title}
-                                    </h5>
-                                    <h6 className="card-subtitle mb-3 text-muted">
-                                        {card.subtitle}
-                                    </h6>
-                                    <p className="card-text" style={{ fontSize: '48px', fontWeight: 'bold', color: card.color }}>
-                                        {card.value}
-                                    </p>
+                        <div
+                            key={index}
+                            className="group relative bg-white shadow-lg hover:shadow-2xl 
+                                       transition-all duration-500 hover:-translate-y-3 
+                                       w-full aspect-square max-w-[260px] mx-auto 
+                                       rounded-full overflow-hidden border border-emerald-100"
+                        >
+                            {/* Semi-Circle - Top half of the circle */}
+                            <div className={`absolute ${card.color} transition-all duration-500 group-hover:scale-105`}
+                                 style={{
+                                     top: 0,
+                                     left: 0,
+                                     right: 0,
+                                     height: '50%',
+                                     borderRadius: '50% 50% 0 0',
+                                 }} />
+
+                            {/* Inner decorative circle */}
+                            <div className="absolute top-[20%] left-1/2 transform -translate-x-1/2 w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm" />
+
+                            {/* Main Content */}
+                            <div className="relative h-full flex flex-col items-center justify-center text-center px-6">
+                                {/* Big Number on Semi-circle */}
+                                <div className="text-white text-5xl font-bold tracking-tighter mt-16 z-10">
+                                    {card.value}
                                 </div>
+
+                                {/* Title */}
+                                <h5 className="text-xl font-semibold text-slate-800 mt-10 mb-1">
+                                    {card.title}
+                                </h5>
+
+                                {/* Subtitle */}
+                                <p className="text-slate-500 text-[13px] px-6 leading-tight">
+                                    {card.subtitle}
+                                </p>
+
+                                {/* Bottom Accent Number */}
+                                <p className={`mt-6 mb-8 text-3xl font-bold ${card.textColor}`}>
+                                    {card.value}
+                                </p>
                             </div>
                         </div>
                     ))}

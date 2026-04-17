@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import pattern from '../images/pattern.png'
 
 const Calender = () => {
     const [currentDate] = useState(new Date())
@@ -28,7 +29,6 @@ const Calender = () => {
         'Dhu al-Hijjah': ['9 - Day of Arafah', '10 - Eid al-Adha']
     }
 
-    // Fetch Hijri date for a specific Gregorian date
     const fetchHijriDate = async (day, month, year) => {
         try {
             const response = await fetch(
@@ -48,13 +48,12 @@ const Calender = () => {
         return null
     }
 
-    // Load Hijri dates for all days in selected month
     useEffect(() => {
         const loadHijriDates = async () => {
             setLoading(true)
             const daysInMonth = getDaysInMonth(selectedYear, selectedMonth)
             const dates = {}
-            
+
             for (let day = 1; day <= daysInMonth; day++) {
                 const hijriDate = await fetchHijriDate(day, selectedMonth, selectedYear)
                 if (hijriDate) {
@@ -64,7 +63,7 @@ const Calender = () => {
             setHijriData(dates)
             setLoading(false)
         }
-        
+
         loadHijriDates()
     }, [selectedMonth, selectedYear])
 
@@ -76,16 +75,15 @@ const Calender = () => {
         return new Date(year, month, 1).getDay()
     }
 
-    // Check if a Hijri date has an Islamic event
     const getIslamicEvent = (hijriDay, hijriMonth) => {
         const monthEvents = islamicEvents[hijriMonth]
         if (!monthEvents) return null
-        
+
         const event = monthEvents.find(event => {
             const eventDay = parseInt(event.split(' - ')[0])
             return eventDay === hijriDay
         })
-        
+
         return event ? event.split(' - ')[1] : null
     }
 
@@ -95,90 +93,47 @@ const Calender = () => {
         const days = []
 
         for (let i = 0; i < firstDay; i++) {
-            days.push(<div key={`empty-${i}`} className="calendar-day empty"></div>)
+            days.push(<div key={`empty-${i}`} className="calendar-day-empty"></div>)
         }
-        
+
         for (let day = 1; day <= daysInMonth; day++) {
-            const isToday = day === currentDate.getDate() && 
-                           selectedMonth === currentDate.getMonth() && 
-                           selectedYear === currentDate.getFullYear()
-            
+            const isToday = day === currentDate.getDate() &&
+                selectedMonth === currentDate.getMonth() &&
+                selectedYear === currentDate.getFullYear()
+
             const hijriInfo = hijriData[day]
             const eventName = hijriInfo ? getIslamicEvent(parseInt(hijriInfo.day), hijriInfo.month) : null
-            
+
             days.push(
-                <div key={day} 
-                     className="calendar-day"
-                     style={{
-                         backgroundColor: isToday ? '#28a745' : 'white',
-                         color: isToday ? 'white' : '#333',
-                         border: '1px solid #e9ecef',
-                         padding: 'clamp(8px, 3vw, 10px)',
-                         textAlign: 'center',
-                         cursor: 'pointer',
-                         transition: 'all 0.3s ease',
-                         borderRadius: '5px',
-                         position: 'relative',
-                         minHeight: 'clamp(60px, 10vw, 80px)',
-                         display: 'flex',
-                         flexDirection: 'column',
-                         justifyContent: 'center'
-                     }}
-                     onMouseEnter={(e) => {
-                         if (!isToday) {
-                             e.currentTarget.style.backgroundColor = '#f8f9fa'
-                             e.currentTarget.style.transform = 'scale(1.02)'
-                         }
-                     }}
-                     onMouseLeave={(e) => {
-                         if (!isToday) {
-                             e.currentTarget.style.backgroundColor = 'white'
-                             e.currentTarget.style.transform = 'scale(1)'
-                         }
-                     }}>
-                    <div style={{
-                        fontSize: 'clamp(14px, 4vw, 18px)',
-                        fontWeight: 'bold',
-                        marginBottom: '4px'
-                    }}>
+                <div
+                    key={day}
+                    className={`p-2 text-center transition-all duration-300 rounded-lg flex flex-col justify-center min-h-[60px] sm:min-h-[80px] border-[1px] border-emerald-700 ${isToday ? 'bg-emerald-600 text-white' : 'bg-white text-gray-800 hover:bg-gray-50 hover:scale-105'
+                        }`}
+                >
+                    <div className="font-bold text-sm sm:text-base mb-1">
                         {day}
                     </div>
                     {hijriInfo && (
-                        <div style={{
-                            fontSize: 'clamp(10px, 2.5vw, 12px)',
-                            color: isToday ? '#e9ecef' : '#6c757d',
-                            marginBottom: eventName ? '2px' : '0'
-                        }}>
+                        <div className={`text-xs ${isToday ? 'text-gray-200' : 'text-gray-500'} mb-0.5`}>
                             {hijriInfo.day} {hijriInfo.month.substring(0, 3)}
                         </div>
                     )}
                     {eventName && (
-                        <div style={{
-                            fontSize: 'clamp(9px, 2vw, 11px)',
-                            backgroundColor: '#ffc107',
-                            color: '#333',
-                            padding: '2px 4px',
-                            borderRadius: '3px',
-                            marginTop: '4px',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            fontWeight: '500'
-                        }}>
+                        <div className="text-xs bg-yellow-400 text-gray-800 px-1 py-0.5 rounded mt-1 truncate font-medium">
                             {eventName}
                         </div>
                     )}
                 </div>
             )
         }
-        
+
         return days
     }
 
     const changeMonth = (increment) => {
         let newMonth = selectedMonth + increment
         let newYear = selectedYear
-        
+
         if (newMonth < 0) {
             newMonth = 11
             newYear--
@@ -186,12 +141,11 @@ const Calender = () => {
             newMonth = 0
             newYear++
         }
-        
+
         setSelectedMonth(newMonth)
         setSelectedYear(newYear)
     }
 
-    // Get current Hijri date for header
     const [currentHijri, setCurrentHijri] = useState(null)
     useEffect(() => {
         const getCurrentHijri = async () => {
@@ -207,248 +161,107 @@ const Calender = () => {
 
     return (
         <>
-            <div style={{
-                background: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)',
-                padding: 'clamp(40px, 10vw, 60px) 20px',
-                textAlign: 'center',
-                color: 'white',
-                marginTop: '56px'
-            }}>
-                <h1 style={{ 
-                    fontSize: 'clamp(32px, 8vw, 48px)', 
-                    marginBottom: '10px' 
-                }}>
+            {/* Header */}
+            <div className="grid justify-center text-center items-center text-emerald-700 pt-16 px-4 mt-14">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl mb-2">
                     Islamic Calendar
                 </h1>
-                <p style={{ 
-                    fontSize: 'clamp(14px, 4vw, 18px)', 
-                    opacity: 0.9 
-                }}>
+                <p className="text-center text-sm sm:text-base opacity-90">
                     Hijri {currentHijri?.year || '1445-1446'} AH
                 </p>
+                <img
+                    src={pattern}
+                    alt="pattern"
+                    className="mx-auto mt-8 opacity-75 w-48"
+                />
             </div>
 
-            <div style={{ 
-                padding: 'clamp(20px, 5vw, 40px) clamp(15px, 4vw, 20px)', 
-                backgroundColor: '#f8f9fa' 
-            }}>
-                <div className="container" style={{ 
-                    maxWidth: '1200px', 
-                    margin: '0 auto',
-                    padding: '0 clamp(10px, 3vw, 20px)'
-                }}>
-                    
-                    {/* Current Date Cards */}
-                    <div style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        gap: 'clamp(15px, 4vw, 20px)',
-                        justifyContent: 'center',
-                        marginBottom: 'clamp(30px, 6vw, 40px)'
-                    }}>
-                        <div style={{
-                            flex: '1',
-                            minWidth: 'clamp(250px, 80vw, 280px)',
-                            background: 'white',
-                            borderRadius: '15px',
-                            padding: 'clamp(20px, 5vw, 25px)',
-                            textAlign: 'center',
-                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                        }}>
-                            <h3 style={{ 
-                                color: '#28a745', 
-                                marginBottom: '15px',
-                                fontSize: 'clamp(16px, 4vw, 20px)'
-                            }}>
+            {/* Main Content */}
+            <div className="bg-gray-100 py-8 px-4 sm:px-6">
+                <div className="max-w-6xl mx-auto">
+
+                    {/* Date Cards */}
+                    <div className="flex flex-wrap gap-4 justify-center mb-8">
+                        <div className="flex-1 min-w-[250px] rounded-xl p-5 text-center border-2 border-emerald-700">
+                            <h3 className="text-green-600 mb-3 text-base sm:text-lg font-semibold">
                                 Gregorian Date
                             </h3>
-                            <p style={{ 
-                                fontSize: 'clamp(16px, 5vw, 24px)', 
-                                fontWeight: 'bold', 
-                                color: '#333',
-                                wordBreak: 'break-word'
-                            }}>
-                                {currentDate.toLocaleDateString('en-US', { 
-                                    weekday: 'long', 
-                                    year: 'numeric', 
-                                    month: 'long', 
-                                    day: 'numeric' 
+                            <p className="text-base sm:text-xl font-bold text-gray-800">
+                                {currentDate.toLocaleDateString('en-US', {
+                                    weekday: 'long',
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric'
                                 })}
                             </p>
                         </div>
-                        
-                        <div style={{
-                            flex: '1',
-                            minWidth: 'clamp(250px, 80vw, 280px)',
-                            background: 'white',
-                            borderRadius: '15px',
-                            padding: 'clamp(20px, 5vw, 25px)',
-                            textAlign: 'center',
-                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                        }}>
-                            <h3 style={{ 
-                                color: '#28a745', 
-                                marginBottom: '15px',
-                                fontSize: 'clamp(16px, 4vw, 20px)'
-                            }}>
+
+                        <div className="flex-1 min-w-[250px] rounded-xl p-5 text-center border-2 border-emerald-700">
+                            <h3 className="text-emerald-600 mb-3 text-base sm:text-lg font-semibold">
                                 Hijri Date
                             </h3>
-                            <p style={{ 
-                                fontSize: 'clamp(16px, 5vw, 24px)', 
-                                fontWeight: 'bold', 
-                                color: '#333',
-                                wordBreak: 'break-word'
-                            }}>
+                            <p className="text-base sm:text-xl font-bold text-gray-800">
                                 {currentHijri ? `${currentHijri.day} ${currentHijri.month} ${currentHijri.year} AH` : 'Loading...'}
                             </p>
                         </div>
                     </div>
 
                     {/* Calendar Navigation */}
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: 'clamp(20px, 5vw, 30px)',
-                        flexWrap: 'wrap',
-                        gap: '15px'
-                    }}>
-                        <button onClick={() => changeMonth(-1)}
-                                style={{
-                                    background: '#28a745',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: 'clamp(8px, 3vw, 10px) clamp(15px, 4vw, 20px)',
-                                    borderRadius: '25px',
-                                    cursor: 'pointer',
-                                    fontSize: 'clamp(12px, 3.5vw, 16px)',
-                                    transition: 'all 0.3s ease',
-                                    whiteSpace: 'nowrap'
-                                }}
-                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#218838'}
-                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#28a745'}>
+                    <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
+                        <button
+                            onClick={() => changeMonth(-1)}
+                            className="bg-emerald-600 text-white px-4 sm:px-6 py-2 rounded-full hover:bg-emerald-700 transition-all text-sm sm:text-base"
+                        >
                             ← Previous
                         </button>
-                        
-                        <h2 style={{ 
-                            color: '#28a745', 
-                            margin: 0,
-                            fontSize: 'clamp(18px, 5vw, 24px)',
-                            textAlign: 'center'
-                        }}>
+
+                        <h2 className="text-emerald-600 text-xl sm:text-2xl font-bold text-center">
                             {gregorianMonths[selectedMonth]} {selectedYear}
                         </h2>
-                        
-                        <button onClick={() => changeMonth(1)}
-                                style={{
-                                    background: '#28a745',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: 'clamp(8px, 3vw, 10px) clamp(15px, 4vw, 20px)',
-                                    borderRadius: '25px',
-                                    cursor: 'pointer',
-                                    fontSize: 'clamp(12px, 3.5vw, 16px)',
-                                    transition: 'all 0.3s ease',
-                                    whiteSpace: 'nowrap'
-                                }}
-                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#218838'}
-                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#28a745'}>
+
+                        <button
+                            onClick={() => changeMonth(1)}
+                            className="bg-emerald-600 text-white px-4 sm:px-6 py-2 rounded-full hover:bg-emerald-700 transition-all text-sm sm:text-base"
+                        >
                             Next →
                         </button>
                     </div>
 
                     {/* Calendar Grid */}
                     {loading ? (
-                        <div style={{ textAlign: 'center', padding: '40px' }}>
+                        <div className="text-center py-10">
                             Loading Islamic calendar...
                         </div>
                     ) : (
-                        <div style={{
-                            background: 'white',
-                            borderRadius: '15px',
-                            padding: 'clamp(15px, 4vw, 20px)',
-                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                            marginBottom: 'clamp(30px, 6vw, 40px)',
-                            overflowX: 'auto'
-                        }}>
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(7, 1fr)',
-                                gap: 'clamp(3px, 2vw, 5px)',
-                                marginBottom: '10px',
-                                minWidth: '280px'
-                            }}>
+                        <div className="rounded-xl p-4 border-[1px] border-emerald-900 overflow-x-auto mb-8">
+                            <div className="grid grid-cols-7 gap-1 mb-2 min-w-[280px]">
                                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                                    <div key={day} style={{
-                                        textAlign: 'center',
-                                        padding: 'clamp(8px, 2vw, 10px)',
-                                        fontWeight: 'bold',
-                                        color: '#28a745',
-                                        backgroundColor: '#f8f9fa',
-                                        borderRadius: '5px',
-                                        fontSize: 'clamp(10px, 3vw, 14px)'
-                                    }}>
+                                    <div key={day} className="text-center p-2 font-bold text-emerald-600 bg-gray-100 rounded-lg text-xs sm:text-sm">
                                         {day}
                                     </div>
                                 ))}
                             </div>
-                            
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(7, 1fr)',
-                                gap: 'clamp(3px, 2vw, 5px)',
-                                minWidth: '280px'
-                            }}>
+
+                            <div className="grid grid-cols-7 gap-1 min-w-[280px]">
                                 {renderCalendar()}
                             </div>
                         </div>
                     )}
 
                     {/* Islamic Events */}
-                    <div style={{
-                        background: 'white',
-                        borderRadius: '15px',
-                        padding: 'clamp(20px, 5vw, 25px)',
-                        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                    }}>
-                        <h3 style={{ 
-                            color: '#28a745', 
-                            marginBottom: '20px', 
-                            textAlign: 'center',
-                            fontSize: 'clamp(18px, 5vw, 24px)'
-                        }}>
+                    <div className="bg-white rounded-xl p-5 border-[1px] border-emerald-900">
+                        <h3 className="text-emerald-600 mb-4 text-center text-xl sm:text-2xl font-bold">
                             Important Islamic Events
                         </h3>
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(250px, 80vw, 300px), 1fr))',
-                            gap: '20px'
-                        }}>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             {Object.entries(islamicEvents).map(([month, events]) => (
-                                <div key={month} style={{
-                                    background: '#f8f9fa',
-                                    padding: 'clamp(12px, 3vw, 15px)',
-                                    borderRadius: '10px',
-                                    borderLeft: `4px solid #28a745`
-                                }}>
-                                    <h4 style={{ 
-                                        color: '#28a745', 
-                                        marginBottom: '10px',
-                                        fontSize: 'clamp(14px, 4vw, 18px)'
-                                    }}>
+                                <div key={month} className="bg-gray-50 p-3 rounded-lg border-l-4 border-green-600">
+                                    <h4 className="text-emerald-600 mb-2 text-sm sm:text-base font-semibold">
                                         {month}
                                     </h4>
-                                    <ul style={{ 
-                                        margin: 0, 
-                                        paddingLeft: 'clamp(15px, 4vw, 20px)' 
-                                    }}>
+                                    <ul className="pl-5 space-y-1">
                                         {events.map((event, index) => (
-                                            <li key={index} style={{ 
-                                                marginBottom: '5px', 
-                                                color: '#666',
-                                                fontSize: 'clamp(12px, 3vw, 14px)',
-                                                wordBreak: 'break-word'
-                                            }}>
+                                            <li key={index} className="text-gray-600 text-xs sm:text-sm">
                                                 {event}
                                             </li>
                                         ))}
