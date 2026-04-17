@@ -213,7 +213,7 @@ const Search = () => {
 
             {/* Search Form */}
             <div className="max-w-4xl mx-auto px-4 mb-8">
-                <div className="bg-white rounded-2xl shadow-lg p-6 border border-emerald-100">
+                <div className="bg-white rounded-2xl p-6 border-[1px] border-emerald-700">
                     {/* Search Type Tabs */}
                     <div className="flex gap-2 mb-6 bg-emerald-50 p-1 rounded-xl">
                         <button
@@ -456,7 +456,6 @@ const Search = () => {
                     </div>
                 )}
 
-                {/* No Results Message */}
                 {!loading && searchPerformed && 
                  ((searchType === 'surah' && !selectedSurah && (!surahResults || surahResults.length === 0)) ||
                   (searchType === 'quran' && quranResults.length === 0 && !error) ||

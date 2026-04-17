@@ -48,6 +48,8 @@ const Navbar = () => {
                     <Link to="/juz" className="py-3 hover:text-amber-400" onClick={() => setIsOpen(false)}>Juz</Link>
                     <Link to="/prayer" className="py-3 hover:text-amber-400" onClick={() => setIsOpen(false)}>Prayer Time</Link>
                     <Link to="/calender" className="py-3 hover:text-amber-400" onClick={() => setIsOpen(false)}>Calendar</Link>
+                    <Link to="/hadith" className="py-3 hover:text-amber-400" onClick={() => setIsOpen(false)}>Hadith</Link>
+                    <Link to="/search" className="py-3 hover:text-amber-400" onClick={() => setIsOpen(false)}>Search</Link>
                 </div>
             </div>
         </nav>
