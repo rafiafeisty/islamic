@@ -28,7 +28,7 @@ const Navbar = () => {
 
                 {/* Mobile Menu */}
                 <div className="md:hidden flex justify-between items-center">
-                    <div className="text-2xl font-bold text-white">Quran</div>
+                    <div className="text-2xl font-bold text-white">Deen Digital</div>
                     <button
                         onClick={() => setIsOpen(!isOpen)}
                         className="flex flex-col gap-1.5"
