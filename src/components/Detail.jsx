@@ -217,7 +217,7 @@ const Detail = () => {
           {ayahs.map((ayah) => (
             <div
               key={ayah.number}
-              className="bg-white mb-6 rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300"
+              className="mb-6 rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300"
             >
               {/* Ayah Header */}
               <div className="bg-emerald-50 px-5 py-4 border-b border-emerald-100 flex items-center justify-between">
