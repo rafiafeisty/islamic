@@ -212,7 +212,7 @@ const Detail = () => {
       </div>
 
       {/* Ayah List */}
-      <div className="bg-gray-50 min-h-screen pb-10 px-4 sm:px-6">
+      <div className="min-h-screen pb-10 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto">
           {ayahs.map((ayah) => (
             <div
